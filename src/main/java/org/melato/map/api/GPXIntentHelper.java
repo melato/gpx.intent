@@ -9,7 +9,6 @@ import java.io.InputStream;
 import org.melato.gpx.GPX;
 import org.melato.gpx.GPXParser;
 import org.melato.gpx.GPXWriter;
-import org.melato.log.Log;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,11 +19,11 @@ import android.net.Uri;
  * the intent contains only XML binary data.
  * The class puts data in the intent as a byte[],
  * but it could also get data from a uri pointing to a GPX file.
- * TODO:  Find the correct way to create a temporary file that can be read by another app.
  * @author Alex Athanasopoulos
  *
  */
 public class GPXIntentHelper {
+  public static final String MIME_TYPE = "application/gpx";
   /** The key for the byte[] data */
   public static final String GPX = "gpx";
   /** A convenient waypoint type for denoting the start or origin of a route search. */
@@ -61,10 +60,9 @@ public class GPXIntentHelper {
   }
   
   public static void putGPXFile(File gpxFile, Intent intent) throws IOException {    
-    Log.info("gpx file: " + gpxFile);
     int flags = intent.getFlags();
     intent.setFlags(flags | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-    intent.setDataAndType(Uri.fromFile(gpxFile), "application/gpx");
+    intent.setDataAndType(Uri.fromFile(gpxFile), MIME_TYPE);
   }
   
   private File getTempDir() {
@@ -107,8 +105,7 @@ public class GPXIntentHelper {
       ByteArrayOutputStream buf = new ByteArrayOutputStream();
       writer.write(gpx, buf);
       intent.putExtra(GPX, buf.toByteArray());
-      intent.setType("application/gpx");
-      //Log.info("gpx: " + buf);
+      intent.setType(MIME_TYPE);
     }
   }
 }
